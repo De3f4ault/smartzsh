@@ -55,7 +55,7 @@ smartzsh_lazy_load() {
 
 # Main module initialization loop
 smartzsh_init_modules() {
-  for module_name in ${SMARTZSH_CONFIG[modules]}; do
+  for module_name in ${=SMARTZSH_CONFIG[modules]}; do
       local module_path="$SMARTZSH_MODULES/$module_name/module.zsh"
       if [[ -f "$module_path" ]]; then
           source "$module_path"
