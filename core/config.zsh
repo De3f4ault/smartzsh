@@ -7,7 +7,7 @@ declare -gA SMARTZSH_CONFIG
 # Set default configuration values
 SMARTZSH_CONFIG[profile]="default"
 SMARTZSH_CONFIG[theme]="default"
-SMARTZSH_CONFIG[modules]=() # Initialize as an empty array by default
+SMARTZSH_CONFIG[modules]=""
 
 # Intelligence & Learning defaults
 SMARTZSH_CONFIG[learning_enabled]="false"
