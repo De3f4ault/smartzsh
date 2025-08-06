@@ -45,22 +45,3 @@ git push -u origin main
 : 1754476043:0;ls -l
 : 1754476047:0;ls -la
 : 1754476071:0;cat .zsh_history > .gitignore
-: 1754476075:0;ls -la
-: 1754476090:0;cat .gitignore
-: 1754476104:0;clear
-: 1754476130:0;history
-: 1754476149:0;git push -U origin/main
-: 1754476162:0;git push -u origin/main
-: 1754476177:0;git push -u origin main
-: 1754477624:0;pwd
-: 1754477662:0;git push -u origin main
-: 1754477677:0;git add .
-: 1754477682:0;git push -u origin main
-: 1754477688:0;ls -l
-: 1754477958:0;git push 
-: 1754483405:0;ls -l
-: 1754483418:0;git push -u origin main
-: 1754483593:0;clear
-: 1754483602:0;git status
-: 1754483617:0;git add .
-: 1754483650:0;git add -u

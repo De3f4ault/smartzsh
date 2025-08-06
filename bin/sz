@@ -1,0 +1,145 @@
+#!/usr/bin/env zsh
+# SmartZSH CLI Management Tool
+
+function sz {
+  setopt localoptions noksharrays
+  [[ $# -gt 0 ]] || {
+    _sz::help
+    return 1
+  }
+
+  local command="$1"
+  shift
+
+  # Ensure core components are sourced if sz is run directly
+  # This prevents issues if sz is called before the main smartzsh.zsh is fully loaded
+  if [[ -z "$SMARTZSH_HOME" ]]; then
+      export SMARTZSH_HOME="${${(%):-%x}:A:h:h}" # Adjust if sz is not in bin/
+      source "$SMARTZSH_HOME/smartzsh.zsh"
+  fi
+
+  (( ${+functions[_sz::$command]} )) || {
+    _sz::help
+    return 1
+  }
+
+  _sz::$command "$@"
+}
+
+# Utility functions (adapted from OhMyZsh's cli.zsh)
+function _sz::confirm {
+  if [[ -n "$1" ]]; then
+    _sz::log prompt "$1" "${${functrace[1]#_}%:*}"
+  fi
+  read -r -k 1
+  if [[ "$REPLY" != $'\n' ]]; then echo; fi
+}
+
+function _sz::log {
+  setopt localoptions nopromptsubst
+  local logtype=$1
+  local logname=${3:-${${functrace[1]#_}%:*}}
+  case "$logtype" in
+    prompt) print -Pn "%S%F{blue}$logname%f%s: $2" ;;
+    debug) print -P "%F{white}$logname%f: $2" ;;
+    info) print -P "%F{green}$logname%f: $2" ;;
+    warn) print -P "%S%F{yellow}$logname%f%s: $2" ;;
+    error) print -P "%S%F{red}$logname%f%s: $2" ;;
+  esac >&2
+}
+
+## User-facing commands
+
+function _sz::help {
+  cat >&2 <<EOF
+Usage: sz <command> [options]
+
+Available commands:
+
+  help                Print this help message
+  module <command>    Manage SmartZSH modules
+  config <command>    Manage SmartZSH configuration
+  db <command>        Manage SmartZSH database (SQLite)
+  stats               Show SmartZSH analytics and performance
+  update              Update SmartZSH framework
+  version             Show the version
+EOF
+}
+
+function _sz::module {
+  # Placeholder for module management commands (enable, disable, list)
+  # These would interact with SMARTZSH_CONFIG[modules]
+  echo "Module management (TODO: Implement)"
+}
+
+function _sz::config {
+  # Placeholder for config management commands (get, set)
+  echo "Configuration management (TODO: Implement)"
+}
+
+function _sz::db {
+  if [[ -z "$1" ]]; then
+    _sz::log error "Usage: sz db <command>"
+    _sz::log info "Available commands: vacuum, export, reset"
+    return 1
+  fi
+
+  local subcommand="$1"
+  shift
+
+  case "$subcommand" in
+    vacuum)
+      _sz::log info "Optimizing SQLite database..."
+      sz_db_exec "VACUUM;"
+      _sz::log info "Database optimized."
+      ;;
+    export)
+      local output_file="${1:-smartzsh_export_$(date +%Y%m%d%H%M%S).sql}"
+      _sz::log info "Exporting database to $output_file..."
+      sqlite3 "$SMARTZSH_DB_PATH" .dump > "$output_file"
+      _sz::log info "Database exported."
+      ;;
+    reset)
+      _sz::log warn "This will irreversibly delete all SmartZSH data (history, analytics, bookmarks)."
+      _sz::confirm "Are you sure you want to reset the database? [y/N] "
+      if [[ "$REPLY" = [yY] ]]; then
+        _sz::log info "Resetting database..."
+        command rm -f "$SMARTZSH_DB_PATH"
+        # Re-initialize schema
+        "$SMARTZSH_HOME/install.sh" # Re-run install to re-create DB and schema
+        _sz::log info "Database reset and re-initialized."
+      else
+        _sz::log info "Database reset cancelled."
+      fi
+      ;;
+    *)
+      _sz::log error "Unknown 'db' subcommand: $subcommand"
+      _sz::log info "Available commands: vacuum, export, reset"
+      return 1
+      ;;
+  esac
+}
+
+function _sz::stats {
+  sz_analytics_report # Calls the function from the analytics module
+}
+
+function _sz::update {
+  _sz::log info "Updating SmartZSH..."
+  (builtin cd "$SMARTZSH_HOME" && git pull --ff-only)
+  _sz::log info "SmartZSH updated. Please restart your terminal."
+}
+
+function _sz::version {
+  local version_file="$SMARTZSH_HOME/VERSION" # Assume a VERSION file exists
+  if [[ -f "$version_file" ]]; then
+    cat "$version_file"
+  else
+    _sz::log info "SmartZSH version: Unknown (VERSION file not found)"
+  fi
+}
+
+# If run from a script, do not set the completion function
+if (( ${+functions[compdef]} )); then
+  compdef _sz sz
+fi
