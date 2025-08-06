@@ -45,3 +45,5 @@ git push -u origin main
 : 1754476043:0;ls -l
 : 1754476047:0;ls -la
 : 1754476071:0;cat .zsh_history > .gitignore
+.zsh_history
+.zsh_history
