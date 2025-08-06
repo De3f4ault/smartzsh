@@ -2,7 +2,7 @@
 # SmartZSH - Main entry point
 
 # Performance tracking start time
-SMARTZSH_START_TIME=$(($(date +%s%N)/1000000))
+SMARTZSH_START_TIME=$(($(sz_timestamp)))
 
 # Core Paths
 export SMARTZSH_HOME="${SMARTZSH_HOME:-${${(%):-%x}:A:h}}"
@@ -35,6 +35,6 @@ fi
 smartzsh_init_modules
 
 # Finalize startup and print performance metrics
-SMARTZSH_END_TIME=$(($(date +%s%N)/1000000))
+SMARTZSH_END_TIME=$(($(sz_timestamp)))
 SMARTZSH_STARTUP_TIME=$(($SMARTZSH_END_TIME - $SMARTZSH_START_TIME))
 zstyle ':smartzsh:timing' display-time "Startup time: ${SMARTZSH_STARTUP_TIME}ms"

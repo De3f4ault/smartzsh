@@ -3,7 +3,7 @@
 # Function to update directory visit count in SQLite for 'z' functionality
 sz_navigation_record_visit() {
     local path="$1"
-    local timestamp=$(($(date +%s%N)/1000000))
+    local timestamp=$(($(sz_timestamp)))
 
     # UPSERT: Insert if not exists, update if exists
     sz_db_exec "INSERT INTO directory_visits (path, visits, last_visit, created_at) VALUES (?, 1, ?, ?)
@@ -37,7 +37,7 @@ sz_bookmark_add() {
     local name="$1"
     local path="${2:-$PWD}"
     local description="$3"
-    local timestamp=$(($(date +%s%N)/1000000))
+    local timestamp=$(($(sz_timestamp)))
 
     sz_db_exec "INSERT INTO bookmarks (name, path, description, created_at, last_accessed) VALUES (?, ?, ?, ?, ?)
                 ON CONFLICT(name) DO UPDATE SET path = ?, description = ?, last_accessed = ?;" \
@@ -54,7 +54,7 @@ sz_bookmark_jump() {
 
     if [[ -n "$path" && -d "$path" ]]; then
         builtin cd "$path"
-        sz_db_exec "UPDATE bookmarks SET last_accessed = ? WHERE name = ?;" "$(($(date +%s%N)/1000000))" "$name"
+        sz_db_exec "UPDATE bookmarks SET last_accessed = ? WHERE name = ?;" "$(($(sz_timestamp)))" "$name"
     else
         echo "Bookmark '$name' not found or path does not exist." >&2
         return 1

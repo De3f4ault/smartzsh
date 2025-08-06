@@ -67,7 +67,7 @@ smartzsh_init_modules() {
       fi
   done
 
-  SMARTZSH_END_TIME=$(($(date +%s%N)/1000000))
+  SMARTZSH_END_TIME=$(($(sz_timestamp)))
   SMARTZSH_STARTUP_TIME=$(($SMARTZSH_END_TIME - $SMARTZSH_START_TIME))
   zstyle ':smartzsh:timing' display-time "Startup time: ${SMARTZSH_STARTUP_TIME}ms"
 }

@@ -17,7 +17,7 @@ sz_history_record_command() {
     local command="$1"
     local exit_code="$2"
     local duration_ms="$3"
-    local timestamp=$(($(date +%s%N)/1000000))
+    local timestamp=$(($(sz_timestamp)))
     local cwd="$PWD"
 
     # Insert into SQLite
@@ -37,7 +37,7 @@ sz_history_search() {
 # Hooks for command recording
 _sz_history_precmd() {
     # Store start time before command execution
-    SMARTZSH_COMMAND_START_TIME=$(($(date +%s%N)/1000000))
+    SMARTZSH_COMMAND_START_TIME=$(($(sz_timestamp)))
 }
 
 _sz_history_preexec() {
@@ -47,7 +47,7 @@ _sz_history_preexec() {
 
 _sz_history_postcmd() {
     # Calculate duration and record to DB
-    local end_time=$(($(date +%s%N)/1000000))
+    local end_time=$(($(sz_timestamp)))
     local duration_ms=$((end_time - SMARTZSH_COMMAND_START_TIME))
     sz_history_record_command "$SMARTZSH_LAST_COMMAND" "$?" "$duration_ms"
 }
