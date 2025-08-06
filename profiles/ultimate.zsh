@@ -2,17 +2,7 @@
 SMARTZSH_CONFIG[profile]="ultimate"
 # This is the crucial line for the modules list
 SMARTZSH_CONFIG[modules]=(
-    "navigation"
-    "history"
-    "aliases"
-    "git"
-    "completions"
-    "environment"
-    "files"
-    "system"
-    "development"
-    "visual"
-    "analytics"
+  "navigation history aliases git completions environment files system development visual analytics"
 )
 
 # Intelligence & Learning
